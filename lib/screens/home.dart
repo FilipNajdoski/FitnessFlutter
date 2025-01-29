@@ -5,7 +5,9 @@ import 'package:untitled/screens/Profile/about.dart';
 import 'package:untitled/screens/Profile/contact.dart';
 import 'package:untitled/screens/Workouts/workout_completed.dart';
 import 'package:untitled/screens/Workouts/workout_screen.dart';
+import 'package:untitled/shared/authProvider.dart';
 import 'package:untitled/shared/profileProvider.dart';
+import 'package:untitled/utils/constants.dart';
 import 'package:untitled/widgets/calendar_widget.dart';
 import 'package:untitled/widgets/home_card_widget.dart';
 import 'package:untitled/screens/Profile/profile_screen.dart';
@@ -16,23 +18,30 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Home Page')),
       drawer: Drawer(
-        child: Consumer<ProfileProvider>(
-          builder: (context, profileProvider, child) {
+        child: Consumer<AuthProvider>(
+          builder: (context, authProvider, child) {
             return ListView(
               padding: EdgeInsets.zero,
               children: [
                 DrawerHeader(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(profileProvider.profileImg),
+                      image: NetworkImage(
+                        (authProvider.userProfile?.profileImg?.isNotEmpty ??
+                                false)
+                            ? authProvider.userProfile!.profileImg!
+                            : defaultProfileImg,
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),
                   child: Align(
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      profileProvider.name,
-                      style: TextStyle(
+                      authProvider.userProfile?.name.isNotEmpty ?? false
+                          ? authProvider.userProfile!.name
+                          : 'Guest User',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -48,8 +57,8 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: Icon(Icons.person),
-                  title: Text('My Profile'),
+                  leading: const Icon(Icons.person),
+                  title: const Text('My Profile'),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -73,8 +82,8 @@ class HomePage extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.contact_mail),
-                  title: Text('Contact'),
+                  leading: const Icon(Icons.contact_mail),
+                  title: const Text('Contact'),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -93,7 +102,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(
-              height: 200.0, // Constrain the height for each card
+              height: 200.0,
               child: HomeCardWidget(
                 title: 'Workouts',
                 imageUrl:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:untitled/screens/Authorization/login_screen.dart';
+import 'package:untitled/screens/Authorization/register_screen.dart';
 import 'package:untitled/screens/Workouts/workout_screen.dart';
 import 'package:untitled/screens/home.dart';
 import 'package:untitled/screens/homepage_screen.dart';
@@ -10,11 +12,13 @@ import '../shared/todosProvider.dart';
 import '../shared/locationsProvider.dart';
 import '../shared/profileProvider.dart';
 import '../shared/workoutProvider.dart';
+import '../shared/authProvider.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => FavoritesProvider()),
         ChangeNotifierProvider(create: (context) => TodosProvider()),
         ChangeNotifierProvider(create: (context) => LocationsProvider()),
@@ -38,8 +42,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Workout App',
       theme: isDark ? ThemeData.dark() : ThemeData.light(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Consumer<AuthProvider>(
+              builder: (context, auth, child) =>
+                  auth.isAuthenticated ? HomePage() : const LoginScreen(),
+            ),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/home': (context) => HomePage(),
+      },
       //home: WorkoutListScreen(),
-      home: HomePage(),
+      //home: HomePage(),
       //home: const HomePageScreen(),
     );
   }
